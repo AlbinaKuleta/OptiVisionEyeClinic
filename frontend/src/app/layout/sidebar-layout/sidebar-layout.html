@@ -1,0 +1,38 @@
+<div class="layout-wrapper">
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <img src="assets/icons/eye.svg" class="brand-icon" />
+        <div>
+          <h2>OptiVision</h2>
+          <p>Eye Clinic</p>
+        </div>
+      </div>
+    </div>
+
+   <nav class="menu">
+  <a
+    *ngFor="let item of menuItems"
+    [routerLink]="item.route"
+    routerLinkActive="active-link"
+    class="menu-link"
+  >
+    <img [src]="item.icon" class="menu-icon" />
+    <span>{{ item.label }}</span>
+  </a>
+</nav>
+
+    <div class="sidebar-bottom">
+      <div class="user-box">
+        <small>Signed in as</small>
+        <strong>{{ fullName }}</strong>
+      </div>
+
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+  </aside>
+
+  <main class="content-area">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -39,7 +39,7 @@ export class LoginComponent {
       next: () => {
         this.error = '';
         this.loading = false;
-        this.router.navigate(['/']);
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.error = err.error?.message || 'Login failed';

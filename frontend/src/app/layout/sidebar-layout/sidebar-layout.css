@@ -1,0 +1,136 @@
+.layout-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f7fb;
+}
+
+.sidebar {
+  width: 270px;
+  background: linear-gradient(180deg, #0b5ed7, #1098d1);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-top {
+  margin-bottom: 2rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.brand-icon {
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+.brand h2 {
+  font-size: 1.3rem;
+  margin: 0;
+  font-weight: 800;
+}
+
+.brand p {
+  margin: 0;
+  opacity: 0.85;
+  font-size: 0.9rem;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.95rem 1rem;
+  border-radius: 14px;
+  color: white;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  font-weight: 500;
+}
+
+.menu-link:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: white;
+}
+
+.active-link {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: 700;
+}
+
+.menu-icon {
+  font-size: 1.05rem;
+  width: 22px;
+  text-align: center;
+}
+
+.sidebar-bottom {
+  margin-top: 1.5rem;
+}
+
+.user-box {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.user-box small {
+  display: block;
+  opacity: 0.85;
+  margin-bottom: 0.35rem;
+}
+
+.logout-btn {
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+  background: white;
+  color: #0b5ed7;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.logout-btn:hover {
+  transform: translateY(-1px);
+}
+
+.content-area {
+  flex: 1;
+  padding: 2rem;
+}
+
+@media (max-width: 991px) {
+  .layout-wrapper {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .content-area {
+    padding: 1rem;
+  }
+}
