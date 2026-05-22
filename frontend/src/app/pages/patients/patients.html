@@ -1,1 +1,216 @@
-<p>patients works!</p>
+<div class="patients-page">
+  <div class="page-header">
+    <div>
+      <h1>Patients</h1>
+      <p>Manage OptiVision Eye Clinic patients.</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="card-box">
+        <h4>Add New Patient</h4>
+
+        <form [formGroup]="patientForm" (ngSubmit)="createPatient()">
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input class="form-control" formControlName="fullName" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Gender</label>
+            <select class="form-control" formControlName="gender">
+              <option value="">Select gender</option>
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" formControlName="dateOfBirth" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Phone Number</label>
+            <input class="form-control" formControlName="phoneNumber" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" formControlName="email" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Address</label>
+            <input class="form-control" formControlName="address" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Medical Notes</label>
+            <textarea class="form-control" rows="3" formControlName="medicalNotes"></textarea>
+          </div>
+
+          <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
+            {{ loading ? 'Saving...' : 'Add Patient' }}
+          </button>
+        </form>
+
+        <div *ngIf="success" class="alert alert-success mt-3">
+          {{ success }}
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger mt-3">
+          {{ error }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card-box">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Patient List</h4>
+          <span class="badge bg-primary">{{ patients.length }} patients</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Created</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let patient of patients" class="patient-row" (click)="viewDetails(patient)">
+                <td>{{ patient.fullName }}</td>
+                <td>{{ patient.gender }}</td>
+                <td>{{ patient.phoneNumber }}</td>
+                <td>{{ patient.email || '-' }}</td>
+                <td>{{ patient.createdAt | date:'shortDate' }}</td>
+
+                <td class="text-end" (click)="$event.stopPropagation()">
+                  <button class="icon-btn view" (click)="viewDetails(patient)" title="View">
+                    <img src="assets/icons/eye.svg" alt="View" />
+                  </button>
+
+                  <button class="icon-btn edit" (click)="openEditModal(patient)" title="Edit">
+                    <img src="assets/icons/pencil-square.svg" alt="Edit" />
+                  </button>
+
+                  <button class="icon-btn delete" (click)="openDeleteModal(patient)" title="Delete">
+                    <img src="assets/icons/trash.svg" alt="Delete" />
+                  </button>
+                </td>
+              </tr>
+
+              <tr *ngIf="patients.length === 0">
+                <td colspan="6" class="text-center text-muted py-4">
+                  No patients found.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="custom-modal-backdrop" *ngIf="patientToDelete">
+    <div class="custom-modal">
+      <h4>Delete Patient</h4>
+      <p>
+        Do you want to delete
+        <strong>{{ patientToDelete.fullName }}</strong>?
+      </p>
+
+      <div class="modal-actions">
+        <button class="btn btn-outline-secondary" (click)="closeDeleteModal()">No</button>
+        <button class="btn btn-danger" (click)="confirmDelete()">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Details Modal -->
+  <div class="custom-modal-backdrop" *ngIf="patientDetails">
+    <div class="custom-modal details-modal">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Patient Details</h4>
+        <button class="close-btn" (click)="closeDetailsModal()">×</button>
+      </div>
+
+      <div class="details-grid">
+        <p><strong>Name:</strong> {{ patientDetails.fullName }}</p>
+        <p><strong>Gender:</strong> {{ patientDetails.gender }}</p>
+        <p><strong>Date of Birth:</strong> {{ patientDetails.dateOfBirth | date:'mediumDate' }}</p>
+        <p><strong>Phone:</strong> {{ patientDetails.phoneNumber }}</p>
+        <p><strong>Email:</strong> {{ patientDetails.email || '-' }}</p>
+        <p><strong>Address:</strong> {{ patientDetails.address || '-' }}</p>
+        <p><strong>Medical Notes:</strong> {{ patientDetails.medicalNotes || '-' }}</p>
+        <p><strong>Created:</strong> {{ patientDetails.createdAt | date:'medium' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="custom-modal-backdrop" *ngIf="patientToEdit">
+    <div class="custom-modal details-modal">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Edit Patient</h4>
+        <button class="close-btn" (click)="closeEditModal()">×</button>
+      </div>
+
+      <form [formGroup]="editForm" (ngSubmit)="updatePatient()">
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input class="form-control" formControlName="fullName" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Gender</label>
+          <select class="form-control" formControlName="gender">
+            <option value="">Select gender</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Date of Birth</label>
+          <input type="date" class="form-control" formControlName="dateOfBirth" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Phone Number</label>
+          <input class="form-control" formControlName="phoneNumber" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input class="form-control" formControlName="email" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Address</label>
+          <input class="form-control" formControlName="address" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Medical Notes</label>
+          <textarea class="form-control" rows="3" formControlName="medicalNotes"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline-secondary" (click)="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
