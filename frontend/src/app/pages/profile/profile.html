@@ -1,1 +1,43 @@
-<p>profile works!</p>
+<div class="profile-page">
+  <div class="page-header">
+    <div>
+      <h1>Profile</h1>
+      <p>View your account information.</p>
+    </div>
+  </div>
+
+  <div class="profile-card">
+    <div class="profile-top">
+      <div class="avatar">
+        {{ getInitials() }}
+      </div>
+
+      <div>
+        <h2>{{ fullName }}</h2>
+        <p>{{ role }}</p>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <span>Full Name</span>
+        <strong>{{ fullName }}</strong>
+      </div>
+
+      <div class="info-box">
+        <span>Email Address</span>
+        <strong>{{ email }}</strong>
+      </div>
+
+      <div class="info-box">
+        <span>Role</span>
+        <strong>{{ role }}</strong>
+      </div>
+
+      <div class="info-box">
+        <span>Clinic</span>
+        <strong>OptiVision Eye Clinic</strong>
+      </div>
+    </div>
+  </div>
+</div>

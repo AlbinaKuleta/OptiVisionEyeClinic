@@ -1,9 +1,24 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './profile.html',
-  styleUrl: './profile.css',
+  styleUrls: ['./profile.css']
 })
-export class ProfileComponent {}
+export class ProfileComponent {
+  fullName = localStorage.getItem('fullName') || 'User';
+  email = localStorage.getItem('email') || 'No email found';
+  role = 'Clinic User';
+
+  getInitials(): string {
+    return this.fullName
+      .split(' ')
+      .map(name => name.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+}

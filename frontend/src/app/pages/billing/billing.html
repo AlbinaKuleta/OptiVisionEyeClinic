@@ -1,1 +1,230 @@
-<p>billing works!</p>
+<div class="billing-page">
+  <div class="page-header">
+    <div>
+      <h1>Billing</h1>
+      <p>Manage clinic invoices and payment records.</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="card-box">
+        <h4>Add Billing Record</h4>
+
+        <form [formGroup]="billingForm" (ngSubmit)="createBilling()">
+          <div class="mb-3">
+            <label class="form-label">Patient</label>
+            <select class="form-control" formControlName="patientId">
+              <option value="">Select patient</option>
+              <option *ngFor="let patient of patients" [value]="patient.id">
+                {{ patient.fullName }}
+              </option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Billing Date</label>
+            <input type="datetime-local" class="form-control" formControlName="billingDate" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Service Name</label>
+            <input class="form-control" placeholder="e.g. Eye Exam" formControlName="serviceName" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Amount</label>
+            <input type="number" class="form-control" formControlName="amount" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Payment Status</label>
+            <select class="form-control" formControlName="paymentStatus">
+              <option value="Pending">Pending</option>
+              <option value="Paid">Paid</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Payment Method</label>
+            <select class="form-control" formControlName="paymentMethod">
+              <option value="">Select method</option>
+              <option value="Cash">Cash</option>
+              <option value="Card">Card</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" rows="3" formControlName="notes"></textarea>
+          </div>
+
+          <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
+            {{ loading ? 'Saving...' : 'Add Billing' }}
+          </button>
+        </form>
+
+        <div *ngIf="success" class="alert alert-success mt-3">{{ success }}</div>
+        <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card-box">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Billing List</h4>
+          <span class="badge bg-primary">{{ billings.length }} records</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Date</th>
+                <th>Service</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let billing of billings" class="billing-row" (click)="viewDetails(billing)">
+                <td>{{ billing.patient?.fullName || '-' }}</td>
+                <td>{{ billing.billingDate | date:'short' }}</td>
+                <td>{{ billing.serviceName }}</td>
+                <td>{{ billing.amount | currency:'EUR' }}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="billing.paymentStatus.toLowerCase()">
+                    {{ billing.paymentStatus }}
+                  </span>
+                </td>
+
+                <td class="text-end" (click)="$event.stopPropagation()">
+                  <button class="icon-btn view" (click)="viewDetails(billing)">
+                    <img src="assets/icons/eye.svg" alt="View" />
+                  </button>
+
+                  <button class="icon-btn edit" (click)="openEditModal(billing)">
+                    <img src="assets/icons/pencil-square.svg" alt="Edit" />
+                  </button>
+
+                  <button class="icon-btn delete" (click)="openDeleteModal(billing)">
+                    <img src="assets/icons/trash.svg" alt="Delete" />
+                  </button>
+                </td>
+              </tr>
+
+              <tr *ngIf="billings.length === 0">
+                <td colspan="6" class="text-center text-muted py-4">
+                  No billing records found.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="billingToDelete">
+    <div class="custom-modal">
+      <h4>Delete Billing</h4>
+      <p>
+        Do you want to delete this billing record for
+        <strong>{{ billingToDelete.patient?.fullName || 'this patient' }}</strong>?
+      </p>
+
+      <div class="modal-actions">
+        <button class="btn btn-outline-secondary" (click)="closeDeleteModal()">No</button>
+        <button class="btn btn-danger" (click)="confirmDelete()">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="billingDetails">
+    <div class="custom-modal details-modal">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Billing Details</h4>
+        <button class="close-btn" (click)="closeDetailsModal()">×</button>
+      </div>
+
+      <p><strong>Patient:</strong> {{ billingDetails.patient?.fullName || '-' }}</p>
+      <p><strong>Date:</strong> {{ billingDetails.billingDate | date:'medium' }}</p>
+      <p><strong>Service:</strong> {{ billingDetails.serviceName }}</p>
+      <p><strong>Amount:</strong> {{ billingDetails.amount | currency:'EUR' }}</p>
+      <p><strong>Status:</strong> {{ billingDetails.paymentStatus }}</p>
+      <p><strong>Method:</strong> {{ billingDetails.paymentMethod || '-' }}</p>
+      <p><strong>Notes:</strong> {{ billingDetails.notes || '-' }}</p>
+      <p><strong>Created:</strong> {{ billingDetails.createdAt | date:'medium' }}</p>
+    </div>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="billingToEdit">
+    <div class="custom-modal details-modal">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Edit Billing</h4>
+        <button class="close-btn" (click)="closeEditModal()">×</button>
+      </div>
+
+      <form [formGroup]="editForm" (ngSubmit)="updateBilling()">
+        <div class="mb-3">
+          <label class="form-label">Patient</label>
+          <select class="form-control" formControlName="patientId">
+            <option value="">Select patient</option>
+            <option *ngFor="let patient of patients" [value]="patient.id">
+              {{ patient.fullName }}
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Billing Date</label>
+          <input type="datetime-local" class="form-control" formControlName="billingDate" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Service Name</label>
+          <input class="form-control" formControlName="serviceName" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Amount</label>
+          <input type="number" class="form-control" formControlName="amount" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Payment Status</label>
+          <select class="form-control" formControlName="paymentStatus">
+            <option value="Pending">Pending</option>
+            <option value="Paid">Paid</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Payment Method</label>
+          <select class="form-control" formControlName="paymentMethod">
+            <option value="">Select method</option>
+            <option value="Cash">Cash</option>
+            <option value="Card">Card</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Notes</label>
+          <textarea class="form-control" rows="3" formControlName="notes"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline-secondary" (click)="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

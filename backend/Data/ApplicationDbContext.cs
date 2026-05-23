@@ -14,5 +14,7 @@ namespace backend.Data
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<EyeExam> EyeExams { get; set; }
         public DbSet<Prescription> Prescriptions { get; set; }
+        public DbSet<Doctor> Doctors { get; set; }
+        public DbSet<Billing> Billings { get; set; }
     }
 }

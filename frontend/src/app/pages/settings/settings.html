@@ -1,1 +1,54 @@
-<p>settings works!</p>
+<div class="settings-page">
+  <div class="page-header">
+    <div>
+      <h1>Settings</h1>
+      <p>Manage clinic and system preferences.</p>
+    </div>
+  </div>
+
+  <div class="settings-card">
+    <h4>Clinic Settings</h4>
+
+    <div class="setting-item">
+      <div>
+        <h6>Clinic Name</h6>
+        <p>Name displayed in the system.</p>
+      </div>
+      <input class="form-control" [(ngModel)]="clinicName" />
+    </div>
+
+    <div class="setting-item">
+      <div>
+        <h6>Language</h6>
+        <p>Default system language.</p>
+      </div>
+      <select class="form-control" [(ngModel)]="language">
+        <option>English</option>
+        <option>Albanian</option>
+      </select>
+    </div>
+
+    <div class="setting-item">
+      <div>
+        <h6>Theme</h6>
+        <p>Choose application appearance.</p>
+      </div>
+      <select class="form-control" [(ngModel)]="theme">
+        <option>Light</option>
+        <option>Dark</option>
+      </select>
+    </div>
+
+    <div class="setting-item">
+      <div>
+        <h6>Notifications</h6>
+        <p>Enable appointment and system notifications.</p>
+      </div>
+      <input type="checkbox" [(ngModel)]="notifications" />
+    </div>
+
+    <button class="btn btn-primary mt-3" (click)="saveSettings()">
+      Save Settings
+    </button>
+  </div>
+</div>
