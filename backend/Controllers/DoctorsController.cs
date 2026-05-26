@@ -1,4 +1,5 @@
-﻿using backend.Data;
+﻿using backend.Constants;
+using backend.Data;
 using backend.Dtos;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +10,7 @@ namespace backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = UserRoles.Admin)]
     public class DoctorsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

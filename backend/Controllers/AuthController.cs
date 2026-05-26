@@ -16,41 +16,12 @@ namespace backend.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        public AuthController(
+            UserManager<ApplicationUser> userManager,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
-        }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDto dto)
-        {
-            if (dto.Password != dto.ConfirmPassword)
-            {
-                return BadRequest(new { message = "Passwords do not match." });
-            }
-
-            var existingUser = await _userManager.FindByEmailAsync(dto.Email);
-            if (existingUser != null)
-            {
-                return BadRequest(new { message = "User already exists." });
-            }
-
-            var user = new ApplicationUser
-            {
-                FullName = dto.FullName,
-                UserName = dto.Email,
-                Email = dto.Email
-            };
-
-            var result = await _userManager.CreateAsync(user, dto.Password);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(new { message = "User registered successfully." });
         }
 
         [HttpPost("login")]
@@ -70,29 +41,44 @@ namespace backend.Controllers
                 return Unauthorized(new { message = "Invalid email or password." });
             }
 
-            var token = GenerateJwtToken(user);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var token = GenerateJwtToken(user, roles);
 
             return Ok(new
             {
                 token,
                 email = user.Email,
-                fullName = user.FullName
+                fullName = user.FullName,
+                roles
             });
         }
 
-        private string GenerateJwtToken(ApplicationUser user)
+        private string GenerateJwtToken(ApplicationUser user, IList<string> roles)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSettings["Key"]!)
+            );
+
+            var credentials = new SigningCredentials(
+                key,
+                SecurityAlgorithms.HmacSha256
+            );
+
+            var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email!),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.FullName)
             };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var token = new JwtSecurityToken(
                 issuer: jwtSettings["Issuer"],

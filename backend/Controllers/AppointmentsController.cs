@@ -1,4 +1,5 @@
-﻿using backend.Data;
+﻿using backend.Constants;
+using backend.Data;
 using backend.Dtos;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Doctor},{UserRoles.Receptionist}")]
         public async Task<IActionResult> GetAppointments()
         {
             var appointments = await _context.Appointments
@@ -31,6 +33,7 @@ namespace backend.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Receptionist}")]
         public async Task<IActionResult> CreateAppointment(CreateAppointmentDto dto)
         {
             var patientExists = await _context.Patients.AnyAsync(p => p.Id == dto.PatientId);
@@ -55,6 +58,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Doctor},{UserRoles.Receptionist}")]
         public async Task<IActionResult> UpdateAppointment(int id, CreateAppointmentDto dto)
         {
             var appointment = await _context.Appointments.FindAsync(id);
@@ -75,6 +79,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> DeleteAppointment(int id)
         {
             var appointment = await _context.Appointments.FindAsync(id);

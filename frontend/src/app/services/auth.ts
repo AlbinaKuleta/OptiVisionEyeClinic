@@ -13,17 +13,21 @@ export class AuthService {
   register(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, data);
   }
+login(data: any): Observable<any> {
+  return this.http.post(`${this.apiUrl}/login`, data).pipe(
+    tap((response: any) => {
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('email', response.email);
+      localStorage.setItem('fullName', response.fullName);
 
-  login(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, data).pipe(
-      tap((response: any) => {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('email', response.email);
-        localStorage.setItem('fullName', response.fullName);
-      })
-    );
-  }
+      const role = response.roles && response.roles.length > 0
+        ? response.roles[0]
+        : '';
 
+      localStorage.setItem('role', role);
+    })
+  );
+}
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('email');

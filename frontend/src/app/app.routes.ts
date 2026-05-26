@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
+import { roleGuard } from './guards/role.guard';
+
 import { LoginComponent } from './pages/login/login';
-import { RegisterComponent } from './pages/register/register';
+import { SidebarLayoutComponent } from './layout/sidebar-layout/sidebar-layout';
+
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { PatientsComponent } from './pages/patients/patients';
 import { AppointmentsComponent } from './pages/appointments/appointments';
@@ -10,25 +13,59 @@ import { DoctorsComponent } from './pages/doctors/doctors';
 import { BillingComponent } from './pages/billing/billing';
 import { ProfileComponent } from './pages/profile/profile';
 import { SettingsComponent } from './pages/settings/settings';
-import { SidebarLayoutComponent } from './layout/sidebar-layout/sidebar-layout';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
 
   {
     path: '',
     component: SidebarLayoutComponent,
     children: [
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'patients', component: PatientsComponent },
-      { path: 'appointments', component: AppointmentsComponent },
-      { path: 'eye-exams', component: EyeExamsComponent },
-      { path: 'prescriptions', component: PrescriptionsComponent },
-      { path: 'doctors', component: DoctorsComponent },
-      { path: 'billing', component: BillingComponent },
-      { path: 'profile', component: ProfileComponent },
-      { path: 'settings', component: SettingsComponent }
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+        canActivate: [roleGuard(['Admin', 'Doctor', 'Receptionist'])]
+      },
+      {
+        path: 'patients',
+        component: PatientsComponent,
+        canActivate: [roleGuard(['Admin', 'Doctor', 'Receptionist'])]
+      },
+      {
+        path: 'appointments',
+        component: AppointmentsComponent,
+        canActivate: [roleGuard(['Admin', 'Doctor', 'Receptionist'])]
+      },
+      {
+        path: 'eye-exams',
+        component: EyeExamsComponent,
+        canActivate: [roleGuard(['Admin', 'Doctor'])]
+      },
+      {
+        path: 'prescriptions',
+        component: PrescriptionsComponent,
+        canActivate: [roleGuard(['Admin', 'Doctor'])]
+      },
+      {
+        path: 'doctors',
+        component: DoctorsComponent,
+        canActivate: [roleGuard(['Admin'])]
+      },
+      {
+        path: 'billing',
+        component: BillingComponent,
+        canActivate: [roleGuard(['Admin', 'Receptionist'])]
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent,
+        canActivate: [roleGuard(['Admin', 'Doctor', 'Receptionist'])]
+      },
+      {
+        path: 'settings',
+        component: SettingsComponent,
+        canActivate: [roleGuard(['Admin'])]
+      }
     ]
   },
 

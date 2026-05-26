@@ -1,5 +1,6 @@
 using backend.Data;
 using backend.Models;
+using backend.Seed;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -75,4 +76,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+await IdentitySeeder.SeedAdminAsync(app.Services);
 app.Run();

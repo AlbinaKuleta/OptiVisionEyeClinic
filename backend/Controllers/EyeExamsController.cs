@@ -1,4 +1,5 @@
-﻿using backend.Data;
+﻿using backend.Constants;
+using backend.Data;
 using backend.Dtos;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +10,7 @@ namespace backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Doctor}")]
     public class EyeExamsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -81,6 +82,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> DeleteEyeExam(int id)
         {
             var exam = await _context.EyeExams.FindAsync(id);

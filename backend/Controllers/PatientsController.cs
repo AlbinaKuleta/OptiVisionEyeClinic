@@ -1,4 +1,5 @@
-﻿using backend.Data;
+﻿using backend.Constants;
+using backend.Data;
 using backend.Dtos;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Doctor},{UserRoles.Receptionist}")]
         public async Task<IActionResult> GetPatients()
         {
             var patients = await _context.Patients
@@ -30,6 +32,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Doctor},{UserRoles.Receptionist}")]
         public async Task<IActionResult> GetPatient(int id)
         {
             var patient = await _context.Patients.FindAsync(id);
@@ -41,6 +44,7 @@ namespace backend.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Receptionist}")]
         public async Task<IActionResult> CreatePatient(CreatePatientDto dto)
         {
             var patient = new Patient
@@ -57,14 +61,11 @@ namespace backend.Controllers
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();
 
-            return Ok(new
-            {
-                message = "Patient created successfully.",
-                patient
-            });
+            return Ok(new { message = "Patient created successfully.", patient });
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Receptionist}")]
         public async Task<IActionResult> UpdatePatient(int id, UpdatePatientDto dto)
         {
             var patient = await _context.Patients.FindAsync(id);
@@ -82,14 +83,11 @@ namespace backend.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(new
-            {
-                message = "Patient updated successfully.",
-                patient
-            });
+            return Ok(new { message = "Patient updated successfully.", patient });
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> DeletePatient(int id)
         {
             var patient = await _context.Patients.FindAsync(id);
