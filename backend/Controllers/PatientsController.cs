@@ -5,6 +5,7 @@ using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace backend.Controllers
 {
@@ -24,12 +25,32 @@ namespace backend.Controllers
         [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Doctor},{UserRoles.Receptionist}")]
         public async Task<IActionResult> GetPatients()
         {
-            var patients = await _context.Patients
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            var query = _context.Patients
+                .Include(p => p.Doctor)
+                .AsQueryable();
+
+            if (User.IsInRole(UserRoles.Doctor))
+            {
+                var doctor = await _context.Doctors
+                    .FirstOrDefaultAsync(d => d.Email == userEmail);
+
+                if (doctor == null)
+                {
+                    return Ok(new List<Patient>());
+                }
+
+                query = query.Where(p => p.DoctorId == doctor.Id);
+            }
+
+            var patients = await query
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
 
             return Ok(patients);
         }
+
 
         [HttpGet("{id}")]
         [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Doctor},{UserRoles.Receptionist}")]
@@ -55,7 +76,9 @@ namespace backend.Controllers
                 PhoneNumber = dto.PhoneNumber,
                 Email = dto.Email,
                 Address = dto.Address,
-                MedicalNotes = dto.MedicalNotes
+                MedicalNotes = dto.MedicalNotes,
+                DoctorId = dto.DoctorId
+
             };
 
             _context.Patients.Add(patient);
@@ -80,6 +103,7 @@ namespace backend.Controllers
             patient.Email = dto.Email;
             patient.Address = dto.Address;
             patient.MedicalNotes = dto.MedicalNotes;
+            patient.DoctorId = dto.DoctorId;
 
             await _context.SaveChangesAsync();
 
@@ -101,4 +125,5 @@ namespace backend.Controllers
             return Ok(new { message = "Patient deleted successfully." });
         }
     }
+
 }

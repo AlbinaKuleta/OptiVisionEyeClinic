@@ -1,3 +1,10 @@
+export interface PatientDoctor {
+  id: number;
+  fullName: string;
+  specialization: string;
+  email: string;
+}
+
 export interface Patient {
   id: number;
   fullName: string;
@@ -7,6 +14,8 @@ export interface Patient {
   email: string;
   address: string;
   medicalNotes: string;
+  doctorId?: number | null;
+  doctor?: PatientDoctor | null;
   createdAt: string;
 }
 
@@ -18,4 +27,5 @@ export interface CreatePatient {
   email: string;
   address: string;
   medicalNotes: string;
+  doctorId?: number | null;
 }

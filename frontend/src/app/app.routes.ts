@@ -13,9 +13,13 @@ import { DoctorsComponent } from './pages/doctors/doctors';
 import { BillingComponent } from './pages/billing/billing';
 import { ProfileComponent } from './pages/profile/profile';
 import { SettingsComponent } from './pages/settings/settings';
+import { UsersComponent } from './pages/users/users';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
 
   {
     path: '',
@@ -57,6 +61,11 @@ export const routes: Routes = [
         canActivate: [roleGuard(['Admin', 'Receptionist'])]
       },
       {
+        path: 'users',
+        component: UsersComponent,
+        canActivate: [roleGuard(['Admin'])]
+      },
+      {
         path: 'profile',
         component: ProfileComponent,
         canActivate: [roleGuard(['Admin', 'Doctor', 'Receptionist'])]
@@ -65,9 +74,17 @@ export const routes: Routes = [
         path: 'settings',
         component: SettingsComponent,
         canActivate: [roleGuard(['Admin'])]
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
       }
     ]
   },
 
-  { path: '', redirectTo: 'login', pathMatch: 'full' }
+  {
+    path: '**',
+    redirectTo: 'login'
+  }
 ];

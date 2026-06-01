@@ -24,5 +24,8 @@ namespace backend.Models
         public string MedicalNotes { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public int? DoctorId { get; set; }
+
+        public Doctor? Doctor { get; set; }
     }
 }

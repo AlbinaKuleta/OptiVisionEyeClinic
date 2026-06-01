@@ -1,0 +1,143 @@
+<div class="users-page">
+  <div class="page-header">
+    <div>
+      <h1>Manage Users</h1>
+      <p>Admin can create users and assign system roles.</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="card-box">
+        <h4>Add New User</h4>
+
+        <form [formGroup]="userForm" (ngSubmit)="createUser()">
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input class="form-control" formControlName="fullName" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" formControlName="password" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <select class="form-control" formControlName="role">
+              <option *ngFor="let role of roles" [value]="role">
+                {{ role }}
+              </option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
+            {{ loading ? 'Creating...' : 'Create User' }}
+          </button>
+        </form>
+
+        <div *ngIf="success" class="alert alert-success mt-3">
+          {{ success }}
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger mt-3">
+          {{ error }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card-box">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>User List</h4>
+          <span class="badge bg-primary">{{ users.length }} users</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td>{{ user.fullName }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <span class="role-pill">
+                    {{ user.roles[0] || 'No Role' }}
+                  </span>
+                </td>
+
+                <td class="text-end">
+                  <button class="icon-btn edit" (click)="openEditRoleModal(user)">
+                    Edit Role
+                  </button>
+
+                  <button class="icon-btn delete" (click)="openDeleteModal(user)">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+
+              <tr *ngIf="users.length === 0">
+                <td colspan="4" class="text-center text-muted py-4">
+                  No users found.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="userToEdit">
+    <div class="custom-modal">
+      <h4>Edit User Role</h4>
+      <p>Change role for <strong>{{ userToEdit.fullName }}</strong>.</p>
+
+      <form [formGroup]="editRoleForm" (ngSubmit)="updateRole()">
+        <div class="mb-3">
+          <label class="form-label">Role</label>
+          <select class="form-control" formControlName="role">
+            <option *ngFor="let role of roles" [value]="role">
+              {{ role }}
+            </option>
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline-secondary" (click)="closeEditRoleModal()">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Save Role
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="userToDelete">
+    <div class="custom-modal">
+      <h4>Delete User</h4>
+      <p>Do you want to delete <strong>{{ userToDelete.fullName }}</strong>?</p>
+
+      <div class="modal-actions">
+        <button class="btn btn-outline-secondary" (click)="closeDeleteModal()">No</button>
+        <button class="btn btn-danger" (click)="confirmDelete()">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
