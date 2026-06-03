@@ -2,53 +2,102 @@
   <div class="page-header">
     <div>
       <h1>Doctors</h1>
-      <p>Manage doctors and their availability.</p>
+      <p>Manage doctor profiles linked to system users.</p>
     </div>
   </div>
 
   <div class="row g-4">
     <div class="col-lg-4">
       <div class="card-box">
-        <h4>Add Doctor</h4>
+        <h4>Add Doctor Profile</h4>
 
         <form [formGroup]="doctorForm" (ngSubmit)="createDoctor()">
           <div class="mb-3">
-            <label class="form-label">Full Name</label>
-            <input class="form-control" formControlName="fullName" />
+            <label class="form-label">Doctor User</label>
+            <select class="form-control" formControlName="applicationUserId">
+              <option value="">Select doctor user</option>
+              <option *ngFor="let user of doctorUsers" [value]="user.id">
+                {{ user.fullName }} - {{ user.email }}
+              </option>
+            </select>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Specialization</label>
-            <input class="form-control" placeholder="e.g. Ophthalmologist" formControlName="specialization" />
+            <input
+              class="form-control"
+              placeholder="e.g. Ophthalmologist"
+              formControlName="specialization"
+            />
           </div>
 
           <div class="mb-3">
             <label class="form-label">Phone Number</label>
-            <input class="form-control" formControlName="phoneNumber" />
+            <input
+              class="form-control"
+              placeholder="e.g. 045 000 000"
+              formControlName="phoneNumber"
+            />
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input class="form-control" formControlName="email" />
+            <label class="form-label">Available Days</label>
+
+            <div class="day-selector">
+              <button
+                type="button"
+                class="day-chip"
+                *ngFor="let day of weekDays"
+                [class.active]="isDaySelected(day.value)"
+                (click)="toggleDay(day.value)"
+              >
+                {{ day.label }}
+              </button>
+            </div>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label">Availability</label>
-            <input class="form-control" placeholder="e.g. Mon-Fri, 09:00-16:00" formControlName="availability" />
+          <div class="row g-2 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Start Time</label>
+              <input
+                type="time"
+                class="form-control"
+                formControlName="startTime"
+              />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">End Time</label>
+              <input
+                type="time"
+                class="form-control"
+                formControlName="endTime"
+              />
+            </div>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Notes</label>
-            <textarea class="form-control" rows="3" formControlName="notes"></textarea>
+            <textarea
+              class="form-control"
+              rows="3"
+              placeholder="Optional notes"
+              formControlName="notes"
+            ></textarea>
           </div>
 
           <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
-            {{ loading ? 'Saving...' : 'Add Doctor' }}
+            {{ loading ? 'Saving...' : 'Add Doctor Profile' }}
           </button>
         </form>
 
-        <div *ngIf="success" class="alert alert-success mt-3">{{ success }}</div>
-        <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+        <div *ngIf="success" class="alert alert-success mt-3">
+          {{ success }}
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger mt-3">
+          {{ error }}
+        </div>
       </div>
     </div>
 
@@ -60,48 +109,100 @@
         </div>
 
         <div class="table-responsive">
-          <table class="table align-middle">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Specialization</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Availability</th>
-                <th class="text-end">Actions</th>
-              </tr>
-            </thead>
+         <table class="table doctor-table align-middle">
+  <thead>
+    <tr>
+      <th>Doctor</th>
+      <th>Specialization</th>
+      <th>Phone</th>
+      <th>Availability</th>
+      <th class="text-end">Actions</th>
+    </tr>
+  </thead>
 
-            <tbody>
-              <tr *ngFor="let doctor of doctors" class="doctor-row" (click)="viewDetails(doctor)">
-                <td>{{ doctor.fullName }}</td>
-                <td>{{ doctor.specialization }}</td>
-                <td>{{ doctor.phoneNumber || '-' }}</td>
-                <td>{{ doctor.email || '-' }}</td>
-                <td>{{ doctor.availability || '-' }}</td>
+  <tbody>
+    <tr
+      *ngFor="let doctor of doctors"
+      class="doctor-row"
+      (click)="viewDetails(doctor)"
+    >
+      <td>
+        <div class="doctor-info">
+          <div class="doctor-avatar">
+            {{ doctor.applicationUser?.fullName?.charAt(0) || 'D' }}
+          </div>
 
-                <td class="text-end" (click)="$event.stopPropagation()">
-                  <button class="icon-btn view" (click)="viewDetails(doctor)">
-                    <img src="assets/icons/eye.svg" alt="View" />
-                  </button>
+          <div>
+            <strong>{{ doctor.applicationUser?.fullName || '-' }}</strong>
+            <small>{{ doctor.applicationUser?.email || '-' }}</small>
+          </div>
+        </div>
+      </td>
 
-                  <button class="icon-btn edit" (click)="openEditModal(doctor)">
-                    <img src="assets/icons/pencil-square.svg" alt="Edit" />
-                  </button>
+      <td>
+        <span class="specialization-pill">
+          {{ doctor.specialization }}
+        </span>
+      </td>
 
-                  <button class="icon-btn delete" (click)="openDeleteModal(doctor)">
-                    <img src="assets/icons/trash.svg" alt="Delete" />
-                  </button>
-                </td>
-              </tr>
+      <td>{{ doctor.phoneNumber || '-' }}</td>
 
-              <tr *ngIf="doctors.length === 0">
-                <td colspan="6" class="text-center text-muted py-4">
-                  No doctors found.
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <td>
+        <div class="availability-box">
+          <div class="day-list">
+            <span
+              class="day-mini"
+              *ngFor="let day of getAvailabilityDays(doctor.availability)"
+            >
+              {{ day }}
+            </span>
+          </div>
+
+          <small class="time-text">
+            {{ getAvailabilityTime(doctor.availability) }}
+          </small>
+        </div>
+      </td>
+
+      <td class="text-end" (click)="$event.stopPropagation()">
+        <div class="action-group">
+          <button
+            class="icon-btn view"
+            type="button"
+            (click)="viewDetails(doctor)"
+            title="View details"
+          >
+            <img src="assets/icons/eye.svg" alt="View" />
+          </button>
+
+          <button
+            class="icon-btn edit"
+            type="button"
+            (click)="openEditModal(doctor)"
+            title="Edit doctor"
+          >
+            <img src="assets/icons/pencil-square.svg" alt="Edit" />
+          </button>
+
+          <button
+            class="icon-btn delete"
+            type="button"
+            (click)="openDeleteModal(doctor)"
+            title="Delete doctor"
+          >
+            <img src="assets/icons/trash.svg" alt="Delete" />
+          </button>
+        </div>
+      </td>
+    </tr>
+
+    <tr *ngIf="doctors.length === 0">
+      <td colspan="5" class="text-center text-muted py-4">
+        No doctors found.
+      </td>
+    </tr>
+  </tbody>
+</table>
         </div>
       </div>
     </div>
@@ -109,12 +210,29 @@
 
   <div class="custom-modal-backdrop" *ngIf="doctorToDelete">
     <div class="custom-modal">
-      <h4>Delete Doctor</h4>
-      <p>Do you want to delete <strong>{{ doctorToDelete.fullName }}</strong>?</p>
+      <h4>Delete Doctor Profile</h4>
+
+      <p>
+        Do you want to delete
+        <strong>{{ doctorToDelete.applicationUser?.fullName || 'this doctor' }}</strong>?
+      </p>
 
       <div class="modal-actions">
-        <button class="btn btn-outline-secondary" (click)="closeDeleteModal()">No</button>
-        <button class="btn btn-danger" (click)="confirmDelete()">Yes, Delete</button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          (click)="closeDeleteModal()"
+        >
+          No
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="confirmDelete()"
+        >
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>
@@ -123,13 +241,20 @@
     <div class="custom-modal details-modal">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Doctor Details</h4>
-        <button class="close-btn" (click)="closeDetailsModal()">×</button>
+
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeDetailsModal()"
+        >
+          ×
+        </button>
       </div>
 
-      <p><strong>Name:</strong> {{ doctorDetails.fullName }}</p>
+      <p><strong>Name:</strong> {{ doctorDetails.applicationUser?.fullName || '-' }}</p>
+      <p><strong>Email:</strong> {{ doctorDetails.applicationUser?.email || '-' }}</p>
       <p><strong>Specialization:</strong> {{ doctorDetails.specialization }}</p>
       <p><strong>Phone:</strong> {{ doctorDetails.phoneNumber || '-' }}</p>
-      <p><strong>Email:</strong> {{ doctorDetails.email || '-' }}</p>
       <p><strong>Availability:</strong> {{ doctorDetails.availability || '-' }}</p>
       <p><strong>Notes:</strong> {{ doctorDetails.notes || '-' }}</p>
       <p><strong>Created:</strong> {{ doctorDetails.createdAt | date:'medium' }}</p>
@@ -139,44 +264,101 @@
   <div class="custom-modal-backdrop" *ngIf="doctorToEdit">
     <div class="custom-modal details-modal">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>Edit Doctor</h4>
-        <button class="close-btn" (click)="closeEditModal()">×</button>
+        <h4>Edit Doctor Profile</h4>
+
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeEditModal()"
+        >
+          ×
+        </button>
       </div>
 
       <form [formGroup]="editForm" (ngSubmit)="updateDoctor()">
         <div class="mb-3">
-          <label class="form-label">Full Name</label>
-          <input class="form-control" formControlName="fullName" />
+          <label class="form-label">Doctor User</label>
+          <select class="form-control" formControlName="applicationUserId">
+            <option value="">Select doctor user</option>
+            <option *ngFor="let user of doctorUsers" [value]="user.id">
+              {{ user.fullName }} - {{ user.email }}
+            </option>
+          </select>
         </div>
 
         <div class="mb-3">
           <label class="form-label">Specialization</label>
-          <input class="form-control" formControlName="specialization" />
+          <input
+            class="form-control"
+            formControlName="specialization"
+          />
         </div>
 
         <div class="mb-3">
           <label class="form-label">Phone Number</label>
-          <input class="form-control" formControlName="phoneNumber" />
+          <input
+            class="form-control"
+            formControlName="phoneNumber"
+          />
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input class="form-control" formControlName="email" />
+          <label class="form-label">Available Days</label>
+
+          <div class="day-selector">
+            <button
+              type="button"
+              class="day-chip"
+              *ngFor="let day of weekDays"
+              [class.active]="isEditDaySelected(day.value)"
+              (click)="toggleEditDay(day.value)"
+            >
+              {{ day.label }}
+            </button>
+          </div>
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">Availability</label>
-          <input class="form-control" formControlName="availability" />
+        <div class="row g-2 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Start Time</label>
+            <input
+              type="time"
+              class="form-control"
+              formControlName="startTime"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">End Time</label>
+            <input
+              type="time"
+              class="form-control"
+              formControlName="endTime"
+            />
+          </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label">Notes</label>
-          <textarea class="form-control" rows="3" formControlName="notes"></textarea>
+          <textarea
+            class="form-control"
+            rows="3"
+            formControlName="notes"
+          ></textarea>
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="btn btn-outline-secondary" (click)="closeEditModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="closeEditModal()"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="btn btn-primary">
+            Save Changes
+          </button>
         </div>
       </form>
     </div>

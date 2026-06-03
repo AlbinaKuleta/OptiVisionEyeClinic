@@ -116,3 +116,142 @@
   font-size: 1.4rem;
   cursor: pointer;
 }
+
+.doctor-table th {
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.doctor-table td {
+  padding: 1rem 0.75rem;
+  vertical-align: middle;
+}
+
+.doctor-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.doctor-info strong {
+  display: block;
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.doctor-info small {
+  display: block;
+  color: #64748b;
+  font-size: 0.82rem;
+  margin-top: 2px;
+}
+
+.doctor-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: #e7f1ff;
+  color: #0d6efd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+}
+
+.specialization-pill {
+  display: inline-flex;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: #eef6ff;
+  color: #0d6efd;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.availability-box {
+  max-width: 260px;
+}
+
+.day-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.day-mini {
+  background: #f1f5f9;
+  color: #334155;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.time-text {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.action-group {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn img {
+  width: 17px;
+  height: 17px;
+}
+
+.icon-btn.view {
+  background: #eaf3ff;
+}
+
+.icon-btn.edit {
+  background: #fff3cd;
+}
+
+.icon-btn.delete {
+  background: #f8d7da;
+}
+
+.day-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.day-chip {
+  border: 1px solid #dbe3ef;
+  background: #f8fafc;
+  color: #475569;
+  padding: 8px 13px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.day-chip:hover {
+  background: #eaf3ff;
+  color: #0d6efd;
+}
+
+.day-chip.active {
+  background: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}

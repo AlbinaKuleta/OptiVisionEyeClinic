@@ -34,7 +34,7 @@ namespace backend.Controllers
             if (User.IsInRole(UserRoles.Doctor))
             {
                 var doctor = await _context.Doctors
-                    .FirstOrDefaultAsync(d => d.Email == userEmail);
+                    .FirstOrDefaultAsync(d => d.ApplicationUser.Email == userEmail);
 
                 if (doctor == null)
                 {

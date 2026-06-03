@@ -21,9 +21,9 @@
             <label class="form-label">Assigned Doctor</label>
             <select class="form-control" formControlName="doctorId">
               <option [ngValue]="null">Select doctor</option>
-              <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
-                {{ doctor.fullName }} - {{ doctor.specialization }}
-              </option>
+             <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
+  {{ doctor.applicationUser?.fullName }} - {{ doctor.specialization }}
+</option>
             </select>
           </div>
 
@@ -187,9 +187,9 @@
           <label class="form-label">Assigned Doctor</label>
           <select class="form-control" formControlName="doctorId">
             <option [ngValue]="null">Select doctor</option>
-            <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
-              {{ doctor.fullName }} - {{ doctor.specialization }}
-            </option>
+           <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
+  {{ doctor.applicationUser?.fullName }} - {{ doctor.specialization }}
+</option>
           </select>
         </div>
 

@@ -155,4 +155,14 @@ export class AppointmentsComponent implements OnInit {
   closeDetailsModal(): void {
     this.appointmentDetails = null;
   }
+
+  truncateText(text: string | null | undefined, maxLength: number = 40): string {
+  if (!text) {
+    return '-';
+  }
+
+  return text.length > maxLength
+    ? text.substring(0, maxLength) + '...'
+    : text;
+}
 }

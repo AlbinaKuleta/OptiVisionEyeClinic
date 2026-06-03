@@ -91,6 +91,21 @@ namespace backend.Controllers
             });
         }
 
+        [HttpGet("doctors")]
+        public async Task<IActionResult> GetDoctorUsers()
+        {
+            var users = await _userManager.GetUsersInRoleAsync(UserRoles.Doctor);
+
+            var result = users.Select(user => new
+            {
+                user.Id,
+                user.FullName,
+                user.Email
+            });
+
+            return Ok(result);
+        }
+
         [HttpPut("{id}/role")]
         public async Task<IActionResult> UpdateUserRole(string id, UpdateUserRoleDto dto)
         {

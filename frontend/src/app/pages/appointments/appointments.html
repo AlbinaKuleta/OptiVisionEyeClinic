@@ -74,7 +74,7 @@
         </div>
 
         <div class="table-responsive">
-          <table class="table align-middle">
+          <table class="table appointment-table align-middle">
             <thead>
               <tr>
                 <th>Patient</th>
@@ -91,7 +91,11 @@
                 <td>{{ appointment.patient?.fullName || '-' }}</td>
                 <td>{{ appointment.doctorName }}</td>
                 <td>{{ appointment.appointmentDate | date:'short' }}</td>
-                <td>{{ appointment.reason }}</td>
+                <td>
+              <span class="reason-text" [title]="appointment.reason">
+                {{ truncateText(appointment.reason, 40) }}
+              </span>
+            </td>
                 <td>
                   <span class="status-badge" [ngClass]="appointment.status.toLowerCase()">
                     {{ appointment.status }}
