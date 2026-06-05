@@ -36,6 +36,65 @@
             </select>
           </div>
 
+          <div *ngIf="isDoctorRoleSelected()" class="doctor-extra-box">
+            <h6>Doctor Profile Details</h6>
+
+            <div class="mb-3">
+              <label class="form-label">Specialization</label>
+              <input
+                class="form-control"
+                placeholder="e.g. Ophthalmologist"
+                formControlName="specialization"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Phone Number</label>
+              <input
+                class="form-control"
+                placeholder="e.g. 045 000 000"
+                formControlName="phoneNumber"
+              />
+            </div>
+
+           <div class="mb-3">
+  <label class="form-label">Available Days</label>
+
+  <div class="day-selector">
+    <button
+      type="button"
+      class="day-chip"
+      *ngFor="let day of weekDays"
+      [class.active]="isDaySelected(day.value)"
+      (click)="toggleDay(day.value)"
+    >
+      {{ day.label }}
+    </button>
+  </div>
+</div>
+
+<div class="row g-2 mb-3">
+  <div class="col-md-6">
+    <label class="form-label">Start Time</label>
+    <input type="time" class="form-control" formControlName="startTime" />
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">End Time</label>
+    <input type="time" class="form-control" formControlName="endTime" />
+  </div>
+</div>
+
+            <div class="mb-3">
+              <label class="form-label">Notes</label>
+              <textarea
+                class="form-control"
+                rows="3"
+                formControlName="notes"
+              ></textarea>
+            </div>
+          </div>
+
           <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
             {{ loading ? 'Creating...' : 'Create User' }}
           </button>
@@ -105,7 +164,6 @@
   <div class="custom-modal-backdrop" *ngIf="userToEdit">
     <div class="custom-modal">
       <h4>Edit User Role</h4>
-      <p>Change role for <strong>{{ userToEdit.fullName }}</strong>.</p>
 
       <form [formGroup]="editRoleForm" (ngSubmit)="updateRole()">
         <div class="mb-3">
@@ -121,8 +179,9 @@
           <button type="button" class="btn btn-outline-secondary" (click)="closeEditRoleModal()">
             Cancel
           </button>
+
           <button type="submit" class="btn btn-primary">
-            Save Role
+            Save
           </button>
         </div>
       </form>
@@ -132,11 +191,20 @@
   <div class="custom-modal-backdrop" *ngIf="userToDelete">
     <div class="custom-modal">
       <h4>Delete User</h4>
-      <p>Do you want to delete <strong>{{ userToDelete.fullName }}</strong>?</p>
+
+      <p>
+        Do you want to delete
+        <strong>{{ userToDelete.fullName }}</strong>?
+      </p>
 
       <div class="modal-actions">
-        <button class="btn btn-outline-secondary" (click)="closeDeleteModal()">No</button>
-        <button class="btn btn-danger" (click)="confirmDelete()">Yes, Delete</button>
+        <button class="btn btn-outline-secondary" (click)="closeDeleteModal()">
+          No
+        </button>
+
+        <button class="btn btn-danger" (click)="confirmDelete()">
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>

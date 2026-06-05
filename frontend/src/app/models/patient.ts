@@ -1,8 +1,15 @@
+export interface PatientDoctorUser {
+  id: string;
+  fullName: string;
+  email: string;
+}
+
 export interface PatientDoctor {
   id: number;
-  fullName: string;
+  applicationUserId: string;
+  applicationUser?: PatientDoctorUser;
   specialization: string;
-  email: string;
+  email?: string;
 }
 
 export interface Patient {

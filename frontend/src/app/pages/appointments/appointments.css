@@ -16,12 +16,12 @@
 
 .page-header h1 {
   margin: 0;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .page-header p {
   margin: 0.4rem 0 0;
-  color: #6c757d;
+  color: #64748b;
 }
 
 .form-control {
@@ -33,9 +33,16 @@
   border-radius: 12px;
 }
 
-.table th {
-  color: #6c757d;
-  font-weight: 600;
+.appointment-table th {
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.appointment-table td {
+  padding: 1rem 0.75rem;
+  vertical-align: middle;
 }
 
 .appointment-row {
@@ -43,111 +50,7 @@
 }
 
 .appointment-row:hover {
-  background: #f8fbff;
-}
-
-.icon-btn {
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 10px;
-  margin-left: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.icon-btn img {
-  width: 18px;
-  height: 18px;
-}
-
-.icon-btn.view {
-  background: #e7f1ff;
-}
-
-.icon-btn.edit {
-  background: #fff3cd;
-}
-
-.icon-btn.delete {
-  background: #f8d7da;
-}
-
-.status-badge {
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.status-badge.scheduled {
-  background: #e7f1ff;
-  color: #0d6efd;
-}
-
-.status-badge.completed {
-  background: #d1e7dd;
-  color: #198754;
-}
-
-.status-badge.cancelled {
-  background: #f8d7da;
-  color: #dc3545;
-}
-
-.custom-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.custom-modal {
-  width: 430px;
-  max-width: 92%;
-  background: white;
-  border-radius: 24px;
-  padding: 2rem;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-}
-
-.details-modal {
-  width: 620px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 1.5rem;
-}
-
-.close-btn {
-  border: none;
-  background: #f1f5f9;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  font-size: 1.4rem;
-  cursor: pointer;
-}
-
-.appointment-table th {
-  color: #64748b;
-  font-size: 0.85rem;
-  font-weight: 700;
-}
-
-.appointment-table td {
-  padding: 1rem 0.75rem;
-  vertical-align: middle;
+  background: #f8fafc;
 }
 
 .reason-text {
@@ -162,6 +65,21 @@
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 800;
+}
+
+.status-pill.scheduled {
+  background: #eaf3ff;
+  color: #0d6efd;
+}
+
+.status-pill.completed {
+  background: #d1e7dd;
+  color: #146c43;
+}
+
+.status-pill.cancelled {
+  background: #f8d7da;
+  color: #b02a37;
 }
 
 .action-group {
@@ -195,4 +113,48 @@
 
 .icon-btn.delete {
   background: #f8d7da;
+}
+
+.custom-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.custom-modal {
+  width: 430px;
+  max-width: 92%;
+  background: white;
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.details-modal {
+  width: 560px;
+}
+
+.close-btn {
+  border: none;
+  background: #f1f5f9;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 1.5rem;
+}
+
+.alert {
+  border-radius: 12px;
 }

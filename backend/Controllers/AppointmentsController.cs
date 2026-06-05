@@ -5,12 +5,13 @@ using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Doctor},{UserRoles.Receptionist}")]
     public class AppointmentsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -21,30 +22,95 @@ namespace backend.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Doctor},{UserRoles.Receptionist}")]
         public async Task<IActionResult> GetAppointments()
         {
-            var appointments = await _context.Appointments
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var query = _context.Appointments
                 .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                    .ThenInclude(d => d.ApplicationUser)
+                .AsQueryable();
+
+            if (User.IsInRole(UserRoles.Doctor))
+            {
+                query = query.Where(a => a.Doctor!.ApplicationUserId == userId);
+            }
+
+            var appointments = await query
                 .OrderByDescending(a => a.AppointmentDate)
                 .ToListAsync();
 
             return Ok(appointments);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAppointment(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var appointment = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                    .ThenInclude(d => d.ApplicationUser)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (appointment == null)
+                return NotFound(new { message = "Appointment not found." });
+
+            if (User.IsInRole(UserRoles.Doctor) &&
+                appointment.Doctor?.ApplicationUserId != userId)
+            {
+                return Forbid();
+            }
+
+            return Ok(appointment);
+        }
+
         [HttpPost]
-        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Receptionist}")]
         public async Task<IActionResult> CreateAppointment(CreateAppointmentDto dto)
         {
-            var patientExists = await _context.Patients.AnyAsync(p => p.Id == dto.PatientId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (!patientExists)
+            var patient = await _context.Patients
+                .FirstOrDefaultAsync(p => p.Id == dto.PatientId);
+
+            if (patient == null)
                 return BadRequest(new { message = "Patient not found." });
+
+            int doctorId;
+
+            if (User.IsInRole(UserRoles.Doctor))
+            {
+                var doctor = await _context.Doctors
+                    .FirstOrDefaultAsync(d => d.ApplicationUserId == userId);
+
+                if (doctor == null)
+                    return Forbid();
+
+                if (patient.DoctorId != doctor.Id)
+                    return Forbid();
+
+                doctorId = doctor.Id;
+            }
+            else
+            {
+                if (dto.DoctorId == null)
+                    return BadRequest(new { message = "Doctor is required." });
+
+                var doctorExists = await _context.Doctors
+                    .AnyAsync(d => d.Id == dto.DoctorId.Value);
+
+                if (!doctorExists)
+                    return BadRequest(new { message = "Doctor not found." });
+
+                doctorId = dto.DoctorId.Value;
+            }
 
             var appointment = new Appointment
             {
                 PatientId = dto.PatientId,
-                DoctorName = dto.DoctorName,
+                DoctorId = doctorId,
                 AppointmentDate = dto.AppointmentDate,
                 Reason = dto.Reason,
                 Status = dto.Status,
@@ -54,20 +120,49 @@ namespace backend.Controllers
             _context.Appointments.Add(appointment);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Appointment created successfully.", appointment });
+            return Ok(new
+            {
+                message = "Appointment created successfully.",
+                appointment
+            });
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Doctor},{UserRoles.Receptionist}")]
         public async Task<IActionResult> UpdateAppointment(int id, CreateAppointmentDto dto)
         {
-            var appointment = await _context.Appointments.FindAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var appointment = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .FirstOrDefaultAsync(a => a.Id == id);
 
             if (appointment == null)
                 return NotFound(new { message = "Appointment not found." });
 
-            appointment.PatientId = dto.PatientId;
-            appointment.DoctorName = dto.DoctorName;
+            if (User.IsInRole(UserRoles.Doctor))
+            {
+                var doctor = await _context.Doctors
+                    .FirstOrDefaultAsync(d => d.ApplicationUserId == userId);
+
+                if (doctor == null)
+                    return Forbid();
+
+                if (appointment.DoctorId != doctor.Id)
+                    return Forbid();
+
+                appointment.PatientId = dto.PatientId;
+                appointment.DoctorId = doctor.Id;
+            }
+            else
+            {
+                if (dto.DoctorId == null)
+                    return BadRequest(new { message = "Doctor is required." });
+
+                appointment.PatientId = dto.PatientId;
+                appointment.DoctorId = dto.DoctorId.Value;
+            }
+
             appointment.AppointmentDate = dto.AppointmentDate;
             appointment.Reason = dto.Reason;
             appointment.Status = dto.Status;
@@ -75,7 +170,11 @@ namespace backend.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Appointment updated successfully.", appointment });
+            return Ok(new
+            {
+                message = "Appointment updated successfully.",
+                appointment
+            });
         }
 
         [HttpDelete("{id}")]

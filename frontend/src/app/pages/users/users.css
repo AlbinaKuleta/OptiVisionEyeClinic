@@ -90,3 +90,38 @@
   gap: 12px;
   margin-top: 1.5rem;
 }
+
+.doctor-extra-box {
+  background: #f8fbff;
+  border: 1px solid #e3eefc;
+  border-radius: 16px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.doctor-extra-box h6 {
+  font-weight: 800;
+  color: #0d6efd;
+  margin-bottom: 1rem;
+}
+.day-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.day-chip {
+  border: 1px solid #dbe3ef;
+  background: #f8fafc;
+  color: #475569;
+  padding: 8px 13px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.day-chip.active {
+  background: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}

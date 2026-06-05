@@ -10,6 +10,11 @@ export interface CreateUser {
   email: string;
   password: string;
   role: string;
+
+  specialization?: string;
+  phoneNumber?: string;
+  availability?: string;
+  notes?: string;
 }
 
 export interface UpdateUserRole {

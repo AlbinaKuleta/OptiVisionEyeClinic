@@ -22,6 +22,8 @@ export class PatientsComponent implements OnInit {
   patientForm: FormGroup;
   editForm: FormGroup;
 
+  role = localStorage.getItem('role') || '';
+
   loading = false;
   success = '';
   error = '';
@@ -41,7 +43,10 @@ export class PatientsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPatients();
-    this.loadDoctors();
+
+    if (this.role !== 'Doctor') {
+      this.loadDoctors();
+    }
   }
 
   createForm(): FormGroup {
@@ -85,9 +90,21 @@ export class PatientsComponent implements OnInit {
       return;
     }
 
+    if (this.role !== 'Doctor' && !this.patientForm.value.doctorId) {
+      this.error = 'Please select assigned doctor.';
+      return;
+    }
+
     this.loading = true;
 
-    this.patientService.createPatient(this.patientForm.value).subscribe({
+    const formValue = this.patientForm.value;
+
+    const payload = {
+      ...formValue,
+      doctorId: this.role === 'Doctor' ? null : Number(formValue.doctorId)
+    };
+
+    this.patientService.createPatient(payload).subscribe({
       next: () => {
         this.success = 'Patient created successfully.';
         this.error = '';
@@ -95,8 +112,8 @@ export class PatientsComponent implements OnInit {
         this.patientForm.reset({ doctorId: null });
         this.loadPatients();
       },
-      error: () => {
-        this.error = 'Failed to create patient.';
+      error: (err) => {
+        this.error = err.error?.message || 'Failed to create patient.';
         this.success = '';
         this.loading = false;
       }
@@ -131,15 +148,27 @@ export class PatientsComponent implements OnInit {
       return;
     }
 
-    this.patientService.updatePatient(this.patientToEdit.id, this.editForm.value).subscribe({
+    if (this.role !== 'Doctor' && !this.editForm.value.doctorId) {
+      this.error = 'Please select assigned doctor.';
+      return;
+    }
+
+    const formValue = this.editForm.value;
+
+    const payload = {
+      ...formValue,
+      doctorId: this.role === 'Doctor' ? null : Number(formValue.doctorId)
+    };
+
+    this.patientService.updatePatient(this.patientToEdit.id, payload).subscribe({
       next: () => {
         this.success = 'Patient updated successfully.';
         this.error = '';
         this.closeEditModal();
         this.loadPatients();
       },
-      error: () => {
-        this.error = 'Failed to update patient.';
+      error: (err) => {
+        this.error = err.error?.message || 'Failed to update patient.';
       }
     });
   }
@@ -158,6 +187,7 @@ export class PatientsComponent implements OnInit {
     this.patientService.deletePatient(this.patientToDelete.id).subscribe({
       next: () => {
         this.success = 'Patient deleted successfully.';
+        this.error = '';
         this.closeDeleteModal();
         this.loadPatients();
       },
@@ -173,5 +203,9 @@ export class PatientsComponent implements OnInit {
 
   closeDetailsModal(): void {
     this.patientDetails = null;
+  }
+
+  canDeletePatient(): boolean {
+    return this.role === 'Admin' || this.role === 'Receptionist';
   }
 }

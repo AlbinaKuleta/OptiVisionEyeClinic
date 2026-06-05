@@ -1,20 +1,38 @@
-import { Patient } from './patient';
+export interface AppointmentPatient {
+  id: number;
+  fullName: string;
+  phoneNumber: string;
+  email: string;
+}
+
+export interface AppointmentDoctorUser {
+  id: string;
+  fullName: string;
+  email: string;
+}
+
+export interface AppointmentDoctor {
+  id: number;
+  applicationUserId: string;
+  applicationUser?: AppointmentDoctorUser;
+  specialization: string;
+}
 
 export interface Appointment {
   id: number;
   patientId: number;
-  patient?: Patient;
-  doctorName: string;
+  patient?: AppointmentPatient;
+  doctorId: number;
+  doctor?: AppointmentDoctor;
   appointmentDate: string;
   reason: string;
   status: string;
   notes: string;
-  createdAt: string;
 }
 
 export interface CreateAppointment {
   patientId: number;
-  doctorName: string;
+  doctorId?: number | null;
   appointmentDate: string;
   reason: string;
   status: string;

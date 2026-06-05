@@ -17,14 +17,25 @@
             <input class="form-control" formControlName="fullName" />
           </div>
 
-          <div class="mb-3">
+          <div class="mb-3" *ngIf="role !== 'Doctor'">
             <label class="form-label">Assigned Doctor</label>
+
             <select class="form-control" formControlName="doctorId">
               <option [ngValue]="null">Select doctor</option>
-             <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
-  {{ doctor.applicationUser?.fullName }} - {{ doctor.specialization }}
-</option>
+
+              <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
+                {{ doctor.applicationUser?.fullName }} - {{ doctor.specialization }}
+              </option>
             </select>
+          </div>
+
+          <div class="mb-3" *ngIf="role === 'Doctor'">
+            <label class="form-label">Assigned Doctor</label>
+            <input
+              class="form-control"
+              value="Assigned to you automatically"
+              disabled
+            />
           </div>
 
           <div class="mb-3">
@@ -38,7 +49,11 @@
 
           <div class="mb-3">
             <label class="form-label">Date of Birth</label>
-            <input type="date" class="form-control" formControlName="dateOfBirth" />
+            <input
+              type="date"
+              class="form-control"
+              formControlName="dateOfBirth"
+            />
           </div>
 
           <div class="mb-3">
@@ -58,7 +73,11 @@
 
           <div class="mb-3">
             <label class="form-label">Medical Notes</label>
-            <textarea class="form-control" rows="3" formControlName="medicalNotes"></textarea>
+            <textarea
+              class="form-control"
+              rows="3"
+              formControlName="medicalNotes"
+            ></textarea>
           </div>
 
           <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
@@ -98,24 +117,48 @@
             </thead>
 
             <tbody>
-              <tr *ngFor="let patient of patients" class="patient-row" (click)="viewDetails(patient)">
+              <tr
+                *ngFor="let patient of patients"
+                class="patient-row"
+                (click)="viewDetails(patient)"
+              >
                 <td>{{ patient.fullName }}</td>
-                <td>{{ patient.doctor?.fullName || 'Not assigned' }}</td>
+
+                <td>
+                  {{ patient.doctor?.applicationUser?.fullName || 'Not assigned' }}
+                </td>
+
                 <td>{{ patient.gender }}</td>
                 <td>{{ patient.phoneNumber }}</td>
                 <td>{{ patient.email || '-' }}</td>
                 <td>{{ patient.createdAt | date:'shortDate' }}</td>
 
                 <td class="text-end" (click)="$event.stopPropagation()">
-                  <button class="icon-btn view" (click)="viewDetails(patient)" title="View">
+                  <button
+                    type="button"
+                    class="icon-btn view"
+                    (click)="viewDetails(patient)"
+                    title="View"
+                  >
                     <img src="assets/icons/eye.svg" alt="View" />
                   </button>
 
-                  <button class="icon-btn edit" (click)="openEditModal(patient)" title="Edit">
+                  <button
+                    type="button"
+                    class="icon-btn edit"
+                    (click)="openEditModal(patient)"
+                    title="Edit"
+                  >
                     <img src="assets/icons/pencil-square.svg" alt="Edit" />
                   </button>
 
-                  <button class="icon-btn delete" (click)="openDeleteModal(patient)" title="Delete">
+                  <button
+                    *ngIf="canDeletePatient()"
+                    type="button"
+                    class="icon-btn delete"
+                    (click)="openDeleteModal(patient)"
+                    title="Delete"
+                  >
                     <img src="assets/icons/trash.svg" alt="Delete" />
                   </button>
                 </td>
@@ -136,14 +179,28 @@
   <div class="custom-modal-backdrop" *ngIf="patientToDelete">
     <div class="custom-modal">
       <h4>Delete Patient</h4>
+
       <p>
         Do you want to delete
         <strong>{{ patientToDelete.fullName }}</strong>?
       </p>
 
       <div class="modal-actions">
-        <button class="btn btn-outline-secondary" (click)="closeDeleteModal()">No</button>
-        <button class="btn btn-danger" (click)="confirmDelete()">Yes, Delete</button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          (click)="closeDeleteModal()"
+        >
+          No
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="confirmDelete()"
+        >
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>
@@ -152,20 +209,45 @@
     <div class="custom-modal details-modal">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Patient Details</h4>
-        <button class="close-btn" (click)="closeDetailsModal()">×</button>
+
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeDetailsModal()"
+        >
+          ×
+        </button>
       </div>
 
       <div class="details-grid">
         <p><strong>Name:</strong> {{ patientDetails.fullName }}</p>
-        <p><strong>Assigned Doctor:</strong> {{ patientDetails.doctor?.fullName || 'Not assigned' }}</p>
-        <p><strong>Doctor Specialization:</strong> {{ patientDetails.doctor?.specialization || '-' }}</p>
+
+        <p>
+          <strong>Assigned Doctor:</strong>
+          {{ patientDetails.doctor?.applicationUser?.fullName || 'Not assigned' }}
+        </p>
+
+        <p>
+          <strong>Doctor Specialization:</strong>
+          {{ patientDetails.doctor?.specialization || '-' }}
+        </p>
+
         <p><strong>Gender:</strong> {{ patientDetails.gender }}</p>
-        <p><strong>Date of Birth:</strong> {{ patientDetails.dateOfBirth | date:'mediumDate' }}</p>
+
+        <p>
+          <strong>Date of Birth:</strong>
+          {{ patientDetails.dateOfBirth | date:'mediumDate' }}
+        </p>
+
         <p><strong>Phone:</strong> {{ patientDetails.phoneNumber }}</p>
         <p><strong>Email:</strong> {{ patientDetails.email || '-' }}</p>
         <p><strong>Address:</strong> {{ patientDetails.address || '-' }}</p>
         <p><strong>Medical Notes:</strong> {{ patientDetails.medicalNotes || '-' }}</p>
-        <p><strong>Created:</strong> {{ patientDetails.createdAt | date:'medium' }}</p>
+
+        <p>
+          <strong>Created:</strong>
+          {{ patientDetails.createdAt | date:'medium' }}
+        </p>
       </div>
     </div>
   </div>
@@ -174,7 +256,14 @@
     <div class="custom-modal details-modal">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Edit Patient</h4>
-        <button class="close-btn" (click)="closeEditModal()">×</button>
+
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeEditModal()"
+        >
+          ×
+        </button>
       </div>
 
       <form [formGroup]="editForm" (ngSubmit)="updatePatient()">
@@ -183,14 +272,25 @@
           <input class="form-control" formControlName="fullName" />
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3" *ngIf="role !== 'Doctor'">
           <label class="form-label">Assigned Doctor</label>
+
           <select class="form-control" formControlName="doctorId">
             <option [ngValue]="null">Select doctor</option>
-           <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
-  {{ doctor.applicationUser?.fullName }} - {{ doctor.specialization }}
-</option>
+
+            <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
+              {{ doctor.applicationUser?.fullName }} - {{ doctor.specialization }}
+            </option>
           </select>
+        </div>
+
+        <div class="mb-3" *ngIf="role === 'Doctor'">
+          <label class="form-label">Assigned Doctor</label>
+          <input
+            class="form-control"
+            value="Assigned to you automatically"
+            disabled
+          />
         </div>
 
         <div class="mb-3">
@@ -204,7 +304,11 @@
 
         <div class="mb-3">
           <label class="form-label">Date of Birth</label>
-          <input type="date" class="form-control" formControlName="dateOfBirth" />
+          <input
+            type="date"
+            class="form-control"
+            formControlName="dateOfBirth"
+          />
         </div>
 
         <div class="mb-3">
@@ -224,12 +328,25 @@
 
         <div class="mb-3">
           <label class="form-label">Medical Notes</label>
-          <textarea class="form-control" rows="3" formControlName="medicalNotes"></textarea>
+          <textarea
+            class="form-control"
+            rows="3"
+            formControlName="medicalNotes"
+          ></textarea>
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="btn btn-outline-secondary" (click)="closeEditModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="closeEditModal()"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="btn btn-primary">
+            Save Changes
+          </button>
         </div>
       </form>
     </div>

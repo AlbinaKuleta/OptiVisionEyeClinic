@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
 import { AppointmentService } from '../../services/appointment';
 import { PatientService } from '../../services/patient';
+import { DoctorService } from '../../services/doctor';
+
 import { Appointment } from '../../models/appointment';
 import { Patient } from '../../models/patient';
+import { Doctor } from '../../models/doctor';
 
 @Component({
   selector: 'app-appointments',
@@ -16,22 +20,28 @@ import { Patient } from '../../models/patient';
 export class AppointmentsComponent implements OnInit {
   appointments: Appointment[] = [];
   patients: Patient[] = [];
+  doctors: Doctor[] = [];
 
   appointmentForm: FormGroup;
   editForm: FormGroup;
 
-  appointmentToEdit: Appointment | null = null;
-  appointmentToDelete: Appointment | null = null;
-  appointmentDetails: Appointment | null = null;
+  role = localStorage.getItem('role') || '';
 
   loading = false;
   success = '';
   error = '';
 
+  appointmentToEdit: Appointment | null = null;
+  appointmentToDelete: Appointment | null = null;
+  appointmentDetails: Appointment | null = null;
+
+  statusOptions = ['Scheduled', 'Completed', 'Cancelled'];
+
   constructor(
     private fb: FormBuilder,
     private appointmentService: AppointmentService,
-    private patientService: PatientService
+    private patientService: PatientService,
+    private doctorService: DoctorService
   ) {
     this.appointmentForm = this.createForm();
     this.editForm = this.createForm();
@@ -40,12 +50,16 @@ export class AppointmentsComponent implements OnInit {
   ngOnInit(): void {
     this.loadAppointments();
     this.loadPatients();
+
+    if (this.role !== 'Doctor') {
+      this.loadDoctors();
+    }
   }
 
   createForm(): FormGroup {
     return this.fb.group({
-      patientId: ['', Validators.required],
-      doctorName: ['', Validators.required],
+      patientId: [null, Validators.required],
+      doctorId: [null],
       appointmentDate: ['', Validators.required],
       reason: ['', Validators.required],
       status: ['Scheduled', Validators.required],
@@ -55,15 +69,34 @@ export class AppointmentsComponent implements OnInit {
 
   loadAppointments(): void {
     this.appointmentService.getAppointments().subscribe({
-      next: (data) => this.appointments = data,
-      error: () => this.error = 'Failed to load appointments.'
+      next: (data) => {
+        this.appointments = data;
+      },
+      error: () => {
+        this.error = 'Failed to load appointments.';
+      }
     });
   }
 
   loadPatients(): void {
     this.patientService.getPatients().subscribe({
-      next: (data) => this.patients = data,
-      error: () => this.error = 'Failed to load patients.'
+      next: (data) => {
+        this.patients = data;
+      },
+      error: () => {
+        this.error = 'Failed to load patients.';
+      }
+    });
+  }
+
+  loadDoctors(): void {
+    this.doctorService.getDoctors().subscribe({
+      next: (data) => {
+        this.doctors = data;
+      },
+      error: () => {
+        this.error = 'Failed to load doctors.';
+      }
     });
   }
 
@@ -73,18 +106,38 @@ export class AppointmentsComponent implements OnInit {
       return;
     }
 
+    if (this.role !== 'Doctor' && !this.appointmentForm.value.doctorId) {
+      this.error = 'Please select a doctor.';
+      return;
+    }
+
     this.loading = true;
 
-    this.appointmentService.createAppointment(this.appointmentForm.value).subscribe({
+    const formValue = this.appointmentForm.value;
+
+    const payload = {
+      patientId: Number(formValue.patientId),
+      doctorId: this.role === 'Doctor' ? null : Number(formValue.doctorId),
+      appointmentDate: formValue.appointmentDate,
+      reason: formValue.reason,
+      status: formValue.status,
+      notes: formValue.notes || ''
+    };
+
+    this.appointmentService.createAppointment(payload).subscribe({
       next: () => {
         this.success = 'Appointment created successfully.';
         this.error = '';
         this.loading = false;
-        this.appointmentForm.reset({ status: 'Scheduled' });
+        this.appointmentForm.reset({
+          patientId: null,
+          doctorId: null,
+          status: 'Scheduled'
+        });
         this.loadAppointments();
       },
-      error: () => {
-        this.error = 'Failed to create appointment.';
+      error: (err) => {
+        this.error = err.error?.message || 'Failed to create appointment.';
         this.success = '';
         this.loading = false;
       }
@@ -96,7 +149,7 @@ export class AppointmentsComponent implements OnInit {
 
     this.editForm.patchValue({
       patientId: appointment.patientId,
-      doctorName: appointment.doctorName,
+      doctorId: appointment.doctorId,
       appointmentDate: appointment.appointmentDate?.substring(0, 16),
       reason: appointment.reason,
       status: appointment.status,
@@ -106,7 +159,11 @@ export class AppointmentsComponent implements OnInit {
 
   closeEditModal(): void {
     this.appointmentToEdit = null;
-    this.editForm.reset({ status: 'Scheduled' });
+    this.editForm.reset({
+      patientId: null,
+      doctorId: null,
+      status: 'Scheduled'
+    });
   }
 
   updateAppointment(): void {
@@ -117,14 +174,32 @@ export class AppointmentsComponent implements OnInit {
       return;
     }
 
-    this.appointmentService.updateAppointment(this.appointmentToEdit.id, this.editForm.value).subscribe({
+    if (this.role !== 'Doctor' && !this.editForm.value.doctorId) {
+      this.error = 'Please select a doctor.';
+      return;
+    }
+
+    const formValue = this.editForm.value;
+
+    const payload = {
+      patientId: Number(formValue.patientId),
+      doctorId: this.role === 'Doctor' ? null : Number(formValue.doctorId),
+      appointmentDate: formValue.appointmentDate,
+      reason: formValue.reason,
+      status: formValue.status,
+      notes: formValue.notes || ''
+    };
+
+    this.appointmentService.updateAppointment(this.appointmentToEdit.id, payload).subscribe({
       next: () => {
         this.success = 'Appointment updated successfully.';
         this.error = '';
         this.closeEditModal();
         this.loadAppointments();
       },
-      error: () => this.error = 'Failed to update appointment.'
+      error: (err) => {
+        this.error = err.error?.message || 'Failed to update appointment.';
+      }
     });
   }
 
@@ -141,10 +216,14 @@ export class AppointmentsComponent implements OnInit {
 
     this.appointmentService.deleteAppointment(this.appointmentToDelete.id).subscribe({
       next: () => {
+        this.success = 'Appointment deleted successfully.';
+        this.error = '';
         this.closeDeleteModal();
         this.loadAppointments();
       },
-      error: () => this.error = 'Failed to delete appointment.'
+      error: () => {
+        this.error = 'Failed to delete appointment.';
+      }
     });
   }
 
@@ -157,12 +236,27 @@ export class AppointmentsComponent implements OnInit {
   }
 
   truncateText(text: string | null | undefined, maxLength: number = 40): string {
-  if (!text) {
-    return '-';
+    if (!text) {
+      return '-';
+    }
+
+    return text.length > maxLength
+      ? text.substring(0, maxLength) + '...'
+      : text;
   }
 
-  return text.length > maxLength
-    ? text.substring(0, maxLength) + '...'
-    : text;
-}
+  canDeleteAppointment(): boolean {
+    return this.role === 'Admin';
+  }
+
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'Completed':
+        return 'completed';
+      case 'Cancelled':
+        return 'cancelled';
+      default:
+        return 'scheduled';
+    }
+  }
 }
