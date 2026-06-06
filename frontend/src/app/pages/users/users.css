@@ -125,3 +125,34 @@
   color: white;
   border-color: #0d6efd;
 }
+
+.action-group {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.icon-btn img {
+  width: 17px;
+  height: 17px;
+}
+
+.icon-btn.edit {
+  background: #fff3cd;
+}
+
+.icon-btn.delete {
+  background: #f8d7da;
+}

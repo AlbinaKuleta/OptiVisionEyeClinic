@@ -139,14 +139,26 @@
                 </td>
 
                 <td class="text-end">
-                  <button class="icon-btn edit" (click)="openEditRoleModal(user)">
-                    Edit Role
-                  </button>
+  <div class="action-group">
+    <button
+      type="button"
+      class="icon-btn edit"
+      (click)="openEditRoleModal(user)"
+      title="Edit role"
+    >
+      <img src="assets/icons/pencil-square.svg" alt="Edit" />
+    </button>
 
-                  <button class="icon-btn delete" (click)="openDeleteModal(user)">
-                    Delete
-                  </button>
-                </td>
+    <button
+      type="button"
+      class="icon-btn delete"
+      (click)="openDeleteModal(user)"
+      title="Delete user"
+    >
+      <img src="assets/icons/trash.svg" alt="Delete" />
+    </button>
+  </div>
+</td>
               </tr>
 
               <tr *ngIf="users.length === 0">

@@ -1,37 +1,133 @@
 <div class="dashboard-page">
-  <div class="container py-5">
-    <div class="dashboard-card shadow">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h1 class="mb-1">OptiVision Dashboard</h1>
-          <p class="text-muted mb-0">Welcome back, {{ fullName }}</p>
-        </div>
+  <div class="dashboard-header">
+    <div>
+      <span class="role-badge">{{ role }}</span>
+      <h1>Welcome back, {{ fullName }}</h1>
+      <p>{{ welcomeSubtitle }}</p>
+    </div>
+  </div>
 
-        <button class="btn btn-danger" (click)="logout()">Logout</button>
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div class="stats-grid" *ngIf="role === 'Admin'">
+    <div class="stat-card">
+      <span>Patients</span>
+      <h2>{{ patients.length }}</h2>
+      <p>Total clinic patients</p>
+    </div>
+
+    <div class="stat-card">
+      <span>Doctors</span>
+      <h2>{{ doctors.length }}</h2>
+      <p>Active doctor profiles</p>
+    </div>
+
+    <div class="stat-card">
+      <span>Appointments</span>
+      <h2>{{ appointments.length }}</h2>
+      <p>All scheduled records</p>
+    </div>
+
+    <div class="stat-card">
+      <span>Users</span>
+      <h2>{{ users.length }}</h2>
+      <p>System accounts</p>
+    </div>
+  </div>
+
+  <div class="stats-grid" *ngIf="role === 'Doctor'">
+    <div class="stat-card">
+      <span>My Patients</span>
+      <h2>{{ patients.length }}</h2>
+      <p>Patients assigned to you</p>
+    </div>
+
+    <div class="stat-card">
+      <span>Today</span>
+      <h2>{{ todayAppointments.length }}</h2>
+      <p>Your appointments today</p>
+    </div>
+
+    <div class="stat-card">
+      <span>Scheduled</span>
+      <h2>{{ scheduledAppointments.length }}</h2>
+      <p>Upcoming appointments</p>
+    </div>
+
+    <div class="stat-card">
+      <span>Completed</span>
+      <h2>{{ completedAppointments.length }}</h2>
+      <p>Finished appointments</p>
+    </div>
+  </div>
+
+  <div class="stats-grid" *ngIf="role === 'Receptionist'">
+    <div class="stat-card">
+      <span>Patients</span>
+      <h2>{{ patients.length }}</h2>
+      <p>Total patient records</p>
+    </div>
+
+    <div class="stat-card">
+      <span>Today</span>
+      <h2>{{ todayAppointments.length }}</h2>
+      <p>Appointments today</p>
+    </div>
+
+    <div class="stat-card">
+      <span>Scheduled</span>
+      <h2>{{ scheduledAppointments.length }}</h2>
+      <p>Pending appointments</p>
+    </div>
+
+    <div class="stat-card">
+      <span>Cancelled</span>
+      <h2>{{ cancelledAppointments.length }}</h2>
+      <p>Cancelled visits</p>
+    </div>
+  </div>
+
+  <div class="dashboard-section">
+    <div class="section-header">
+      <div>
+        <h3>Recent Appointments</h3>
+        <p>Latest appointment activity in the system.</p>
       </div>
+    </div>
 
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="mini-card">
-            <h5>Total Patients</h5>
-            <p>0</p>
-          </div>
-        </div>
+    <div class="table-responsive">
+      <table class="table align-middle dashboard-table">
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
 
-        <div class="col-md-4">
-          <div class="mini-card">
-            <h5>Appointments Today</h5>
-            <p>0</p>
-          </div>
-        </div>
+        <tbody>
+          <tr *ngFor="let appointment of recentAppointments">
+            <td>{{ appointment.patient?.fullName || '-' }}</td>
+            <td>{{ appointment.doctor?.applicationUser?.fullName || '-' }}</td>
+            <td>{{ appointment.appointmentDate | date:'short' }}</td>
+            <td>
+              <span class="status-pill" [class.completed]="appointment.status === 'Completed'"
+                    [class.cancelled]="appointment.status === 'Cancelled'">
+                {{ appointment.status }}
+              </span>
+            </td>
+          </tr>
 
-        <div class="col-md-4">
-          <div class="mini-card">
-            <h5>Signed In As</h5>
-            <p>{{ email }}</p>
-          </div>
-        </div>
-      </div>
+          <tr *ngIf="recentAppointments.length === 0">
+            <td colspan="4" class="text-center text-muted py-4">
+              No appointments found.
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

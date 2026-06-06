@@ -1,54 +1,62 @@
 <div class="settings-page">
   <div class="page-header">
-    <div>
-      <h1>Settings</h1>
-      <p>Manage clinic and system preferences.</p>
-    </div>
+    <h1>Settings</h1>
+    <p>Manage clinic and system preferences.</p>
   </div>
 
-  <div class="settings-card">
+  <div class="card-box">
     <h4>Clinic Settings</h4>
 
-    <div class="setting-item">
-      <div>
-        <h6>Clinic Name</h6>
-        <p>Name displayed in the system.</p>
-      </div>
-      <input class="form-control" [(ngModel)]="clinicName" />
-    </div>
+    <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
+      <div class="setting-row">
+        <div>
+          <strong>Clinic Name</strong>
+          <p>Name displayed in the system.</p>
+        </div>
 
-    <div class="setting-item">
-      <div>
-        <h6>Language</h6>
-        <p>Default system language.</p>
+        <input class="form-control" formControlName="clinicName" />
       </div>
-      <select class="form-control" [(ngModel)]="language">
-        <option>English</option>
-        <option>Albanian</option>
-      </select>
-    </div>
 
-    <div class="setting-item">
-      <div>
-        <h6>Theme</h6>
-        <p>Choose application appearance.</p>
+      <div class="setting-row">
+        <div>
+          <strong>Language</strong>
+          <p>Default system language.</p>
+        </div>
+
+        <select class="form-control" formControlName="language">
+          <option value="English">English</option>
+          <option value="Albanian">Albanian</option>
+        </select>
       </div>
-      <select class="form-control" [(ngModel)]="theme">
-        <option>Light</option>
-        <option>Dark</option>
-      </select>
-    </div>
 
-    <div class="setting-item">
-      <div>
-        <h6>Notifications</h6>
-        <p>Enable appointment and system notifications.</p>
+      <div class="setting-row">
+        <div>
+          <strong>Theme</strong>
+          <p>Choose application appearance.</p>
+        </div>
+
+        <select class="form-control" formControlName="theme">
+          <option value="Light">Light</option>
+          <option value="Classic">Classic</option>
+        </select>
       </div>
-      <input type="checkbox" [(ngModel)]="notifications" />
-    </div>
 
-    <button class="btn btn-primary mt-3" (click)="saveSettings()">
-      Save Settings
-    </button>
+      <div class="setting-row">
+        <div>
+          <strong>Notifications</strong>
+          <p>Enable appointment and system notifications.</p>
+        </div>
+
+        <input type="checkbox" formControlName="notifications" />
+      </div>
+
+      <button class="btn btn-primary" type="submit">
+        Save Settings
+      </button>
+
+      <div *ngIf="success" class="alert alert-success mt-3">
+        {{ success }}
+      </div>
+    </form>
   </div>
 </div>
