@@ -1,1 +1,176 @@
-/* You can add global styles to this file, and also import other style files */
+/* ===========================
+   DARK THEME - GLOBAL
+=========================== */
+
+body.theme-dark {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+body.theme-dark .layout-wrapper,
+body.theme-dark .content-area,
+body.theme-dark .patients-page,
+body.theme-dark .appointments-page,
+body.theme-dark .doctors-page,
+body.theme-dark .users-page,
+body.theme-dark .settings-page,
+body.theme-dark .dashboard-page {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+body.theme-dark .sidebar {
+  background: #111827 !important;
+  border-right: 1px solid #334155 !important;
+}
+
+body.theme-dark .brand h2,
+body.theme-dark .brand p,
+body.theme-dark .menu-link,
+body.theme-dark .user-box strong,
+body.theme-dark .logout-btn {
+  color: #f8fafc !important;
+}
+
+body.theme-dark .menu-link:hover,
+body.theme-dark .menu-link.active-link {
+  background: #1e293b !important;
+  color: #ffffff !important;
+}
+
+body.theme-dark .user-box {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+body.theme-dark .logout-btn {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+body.theme-dark .page-header,
+body.theme-dark .card-box,
+body.theme-dark .dashboard-header,
+body.theme-dark .dashboard-section,
+body.theme-dark .stat-card,
+body.theme-dark .custom-modal {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25) !important;
+}
+
+body.theme-dark h1,
+body.theme-dark h2,
+body.theme-dark h3,
+body.theme-dark h4,
+body.theme-dark h5,
+body.theme-dark h6,
+body.theme-dark strong,
+body.theme-dark label {
+  color: #f8fafc !important;
+}
+
+body.theme-dark p,
+body.theme-dark small,
+body.theme-dark span,
+body.theme-dark .text-muted,
+body.theme-dark .form-label {
+  color: #cbd5e1 !important;
+}
+
+body.theme-dark .form-control,
+body.theme-dark input,
+body.theme-dark select,
+body.theme-dark textarea {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+}
+
+body.theme-dark .form-control::placeholder,
+body.theme-dark input::placeholder,
+body.theme-dark textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+body.theme-dark .table {
+  background: transparent !important;
+  color: #f8fafc !important;
+}
+
+body.theme-dark .table thead,
+body.theme-dark .table tbody,
+body.theme-dark .table tr,
+body.theme-dark .table th,
+body.theme-dark .table td {
+  background: transparent !important;
+  color: #e5e7eb !important;
+  border-color: #334155 !important;
+}
+
+body.theme-dark .table-hover tbody tr:hover,
+body.theme-dark .patient-row:hover,
+body.theme-dark .appointment-row:hover,
+body.theme-dark .doctor-row:hover {
+  background: #263449 !important;
+}
+
+body.theme-dark .badge,
+body.theme-dark .role-pill,
+body.theme-dark .role-tag {
+  background: #334155 !important;
+  color: #f8fafc !important;
+}
+
+body.theme-dark .icon-btn.view {
+  background: #334155 !important;
+}
+
+body.theme-dark .icon-btn.edit {
+  background: #78350f !important;
+}
+
+body.theme-dark .icon-btn.delete {
+  background: #7f1d1d !important;
+}
+
+body.theme-dark .icon-btn img {
+  filter: invert(1);
+}
+
+body.theme-dark .status-pill {
+  background: #334155 !important;
+  color: #f8fafc !important;
+}
+
+body.theme-dark .status-pill.completed {
+  background: #14532d !important;
+  color: #dcfce7 !important;
+}
+
+body.theme-dark .status-pill.cancelled {
+  background: #7f1d1d !important;
+  color: #fee2e2 !important;
+}
+
+body.theme-dark .alert-success {
+  background: #14532d !important;
+  color: #dcfce7 !important;
+  border-color: #166534 !important;
+}
+
+body.theme-dark .alert-danger {
+  background: #7f1d1d !important;
+  color: #fee2e2 !important;
+  border-color: #991b1b !important;
+}
+
+body.theme-dark .custom-modal-backdrop {
+  background: rgba(0, 0, 0, 0.65) !important;
+}
+
+body.theme-dark .close-btn {
+  background: #334155 !important;
+  color: #f8fafc !important;
+}
