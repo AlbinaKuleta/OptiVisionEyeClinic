@@ -142,6 +142,12 @@ export class EyeExamsComponent implements OnInit {
     this.examToDelete = null;
   }
 
+  getEyeExamCountText(): string {
+  return this.eyeExams.length === 1
+    ? '1 eye exam'
+    : `${this.eyeExams.length} eye exams`;
+}
+
   confirmDelete(): void {
     if (!this.examToDelete) return;
 

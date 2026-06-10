@@ -150,6 +150,12 @@ export class PrescriptionsComponent implements OnInit {
     this.prescriptionToDelete = null;
   }
 
+  getPrescriptionCountText(): string {
+  return this.prescriptions.length === 1
+    ? '1 prescription'
+    : `${this.prescriptions.length} prescriptions`;
+}
+
   confirmDelete(): void {
     if (!this.prescriptionToDelete) return;
 

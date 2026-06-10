@@ -174,3 +174,18 @@ body.theme-dark .close-btn {
   background: #334155 !important;
   color: #f8fafc !important;
 }
+
+body.theme-dark .status-completed {
+  background: #14532d;
+  color: #86efac;
+}
+
+body.theme-dark .status-cancelled {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+body.theme-dark .status-scheduled {
+  background: #1e3a8a;
+  color: #93c5fd;
+}

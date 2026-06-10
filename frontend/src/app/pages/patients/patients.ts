@@ -73,6 +73,11 @@ export class PatientsComponent implements OnInit {
     });
   }
 
+  getPatientCountText(): string {
+  return this.patients.length === 1
+    ? '1 patient'
+    : `${this.patients.length} patients`;
+}
   loadDoctors(): void {
     this.doctorService.getDoctors().subscribe({
       next: (data) => {

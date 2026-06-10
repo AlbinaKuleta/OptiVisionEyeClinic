@@ -138,6 +138,11 @@ export class BillingComponent implements OnInit {
     this.billingToDelete = null;
   }
 
+  getBillingCountText(): string {
+  return this.billings.length === 1
+    ? '1 billing record'
+    : `${this.billings.length} billing records`;
+}
   confirmDelete(): void {
     if (!this.billingToDelete) return;
 

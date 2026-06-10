@@ -144,6 +144,12 @@ export class AppointmentsComponent implements OnInit {
     });
   }
 
+  getAppointmentCountText(): string {
+  return this.appointments.length === 1
+    ? '1 appointment'
+    : `${this.appointments.length} appointments`;
+}
+
   openEditModal(appointment: Appointment): void {
     this.appointmentToEdit = appointment;
 

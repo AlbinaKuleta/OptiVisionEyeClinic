@@ -64,6 +64,11 @@ export class UsersComponent implements OnInit {
     this.loadUsers();
   }
 
+  getUserCountText(): string {
+  return this.users.length === 1
+    ? '1 user'
+    : `${this.users.length} users`;
+}
   isDoctorRoleSelected(): boolean {
     return this.userForm.get('role')?.value === 'Doctor';
   }

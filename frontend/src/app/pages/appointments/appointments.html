@@ -84,7 +84,9 @@
       <div class="card-box">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h4>Appointment List</h4>
-          <span class="badge bg-primary">{{ appointments.length }} appointments</span>
+          <span class="badge bg-primary">
+            {{ getAppointmentCountText() }}
+          </span>
         </div>
 
         <div class="table-responsive">
@@ -125,7 +127,14 @@
                 </td>
 
                 <td>
-                  <span class="status-pill" [ngClass]="getStatusClass(appointment.status)">
+                  <span
+                    class="status-pill"
+                    [ngClass]="{
+                      'status-scheduled': appointment.status === 'Scheduled',
+                      'status-completed': appointment.status === 'Completed',
+                      'status-cancelled': appointment.status === 'Cancelled'
+                    }"
+                  >
                     {{ appointment.status }}
                   </span>
                 </td>

@@ -263,6 +263,12 @@ export class DoctorsComponent implements OnInit {
     });
   }
 
+  getDoctorCountText(): string {
+  return this.doctors.length === 1
+    ? '1 doctor'
+    : `${this.doctors.length} doctors`;
+}
+
   getAvailabilityDays(availability: string): string[] {
   if (!availability) {
     return [];
