@@ -3,11 +3,13 @@
 }
 
 .page-header,
-.profile-card {
+.profile-card,
+.card-box {
   background: white;
-  border-radius: 20px;
+  border: 1px solid #e8eef7;
+  border-radius: 22px;
   padding: 1.5rem;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
 }
 
 .page-header {
@@ -16,70 +18,99 @@
 
 .page-header h1 {
   margin: 0;
-  font-weight: 800;
+  font-weight: 900;
+  color: #102033;
 }
 
 .page-header p {
   margin: 0.4rem 0 0;
-  color: #6c757d;
+  color: #64748b;
+}
+
+.profile-card {
+  margin-bottom: 1.5rem;
 }
 
 .profile-top {
   display: flex;
   align-items: center;
-  gap: 1.2rem;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .avatar {
-  width: 82px;
-  height: 82px;
+  width: 76px;
+  height: 76px;
   border-radius: 22px;
   background: linear-gradient(135deg, #0d6efd, #0dcaf0);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.7rem;
-  font-weight: 800;
+  font-size: 1.6rem;
+  font-weight: 900;
 }
 
 .profile-top h2 {
   margin: 0;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .profile-top p {
   margin: 0.3rem 0 0;
-  color: #6c757d;
+  color: #64748b;
 }
 
-.info-grid {
+.profile-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 0.9rem;
 }
 
 .info-box {
-  background: #f8fbff;
-  border: 1px solid #e9eef7;
+  background: #f8fafc;
+  border: 1px solid #e8eef7;
   border-radius: 16px;
   padding: 1rem;
 }
 
 .info-box span {
   display: block;
-  color: #6c757d;
-  font-size: 0.9rem;
+  color: #64748b;
+  font-size: 0.85rem;
   margin-bottom: 0.4rem;
 }
 
 .info-box strong {
-  color: #111827;
+  color: #102033;
+}
+
+.doctor-box {
+  margin-top: 1.5rem;
+}
+
+.doctor-box h4,
+.card-box h4 {
+  font-weight: 900;
+  margin-bottom: 1rem;
+}
+
+.form-control {
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+}
+
+.btn {
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+.alert {
+  border-radius: 12px;
 }
 
 @media (max-width: 768px) {
-  .info-grid {
+  .profile-grid {
     grid-template-columns: 1fr;
   }
 }
